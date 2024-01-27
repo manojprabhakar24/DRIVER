@@ -1,5 +1,6 @@
 import 'package:demo/register.dart';
 import 'package:flutter/material.dart';
+import 'otp.dart';
 
 class MyHomePage extends StatelessWidget {
   @override
@@ -8,7 +9,7 @@ class MyHomePage extends StatelessWidget {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(250),
         child: AppBar(
-          backgroundColor: Colors.red[100],
+          backgroundColor: Color(0xffffded0),
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -47,10 +48,11 @@ class MyHomePage extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 15),
             TextField(
               decoration: InputDecoration(
                 labelText: 'Enter Your Phone Number',
+                labelStyle: TextStyle(color: Colors.black), // Set the label text color
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,
@@ -60,6 +62,7 @@ class MyHomePage extends StatelessWidget {
                 contentPadding: EdgeInsets.all(16.0),
               ),
             ),
+
             SizedBox(height: 20),
             Row(
               children: [
@@ -88,12 +91,12 @@ class MyHomePage extends StatelessWidget {
                 // Navigate to the next screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NextScreen()),
+                  MaterialPageRoute(builder: (context) => Register()),
                 );
               },
               child: Center(
                 child: Text(
-                  'Register An New Account ?',
+                  'Register A New Account?',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -105,9 +108,19 @@ class MyHomePage extends StatelessWidget {
             SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OTPPage()),
+                );
                 // Handle button press
               },
-              child: Text('Continue'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              ),
+              child: Text('Continue',style: TextStyle(
+                color: Colors.white
+              ),
+              ),
             ),
           ],
         ),
