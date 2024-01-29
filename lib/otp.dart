@@ -1,7 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
-class OTPPage extends StatelessWidget {
+import 'home.dart';
+import 'new.dart'; // Import your NewScreen file
+
+class OTP extends StatefulWidget {
+  final String enteredName;
+
+  const OTP({Key? key, required this.enteredName}) : super(key: key);
+
+  @override
+  State<OTP> createState() => _OTPState();
+}
+
+class _OTPState extends State<OTP> {
+  final TextEditingController _otpController = TextEditingController();
+  String errorMessage = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,64 +60,94 @@ class OTPPage extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(height: 20),
-            Text(
-              'Phone Number',
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
+            SizedBox(
+              height: 10,
             ),
-            SizedBox(height: 10),
             Text(
               "We've sent an SMS with an activation code to your phone",
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 10),
             Text(
-              '9900909876',
-              style: TextStyle(fontSize: 16, color: Colors.red[300]),
+              ' ${widget.enteredName}',
+              style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'OTP',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+            SizedBox(
+              height: 50,
             ),
-            SizedBox(height: 20),
-            Container(
-              color: Colors.white, // Set the background color
-              child: Pinput(
-                length: 6,
-                showCursor: true,
-
-              ),
+            Pinput(
+              length: 6,
+              showCursor: true,
+              controller: _otpController,
+              onChanged: (value) {
+                // Check if entered OTP is correct
+                if (value.length == 6) {
+                  // Clear the error message if OTP is correct
+                  setState(() {
+                    errorMessage = '';
+                  });
+                }
+              },
             ),
-            SizedBox(height: 40),
+           Spacer(),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => OTPPage()),
-                );
-                // Handle button press
+                // Verify OTP when the button is pressed
+                _verifyOTP(_otpController.text);
               },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.orange, // Change the button color here
               ),
               child: Text('Verify',style: TextStyle(
-                  color: Colors.white
-              ),
-              ),
+                color: Colors.white,fontSize: 20
+              )),
             ),
-            // Additional text or widgets can be added here as needed
+
+            SizedBox(
+              height: 18,
+            ),
+            Text(
+              errorMessage,
+              style: TextStyle(color: Colors.red),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _verifyOTP(String enteredOTP) async {
+    try {
+      PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: LoginScreen.verify,
+        smsCode: enteredOTP,
+      );
+
+      await APIs.auth.signInWithCredential(credential);
+
+      // Navigate to the next screen on successful verification
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MyHomePage(),
+        ),
+      );
+    } catch (e) {
+      print("Error verifying OTP: $e");
+
+      setState(() {
+        if (e is FirebaseAuthException) {
+          const errorMessages = {
+            'invalid-verification-code': 'Incorrect OTP. Please try again.',
+            'invalid-verification-id': 'Invalid verification ID. Please restart the process.',
+          };
+          errorMessage = errorMessages[e.code] ??
+              'An unexpected error occurred. Please try again.';
+        } else {
+          errorMessage = 'An unexpected error occurred. Please try again.';
+        }
+      });
+    }
   }
 }

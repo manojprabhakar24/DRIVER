@@ -1,8 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:demo/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'otp.dart';
 
-class MyHomePage extends StatelessWidget {
+
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({Key? key}) : super(key: key);
+  static String verify = "";
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController countryCode = TextEditingController();
+  var phone = "";
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    countryCode.text = '+91';
+    super.initState();
+    //checkUserPhoneNumber();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,17 +76,51 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Enter Your Phone Number',
-                labelStyle: TextStyle(color: Colors.black), // Set the label text color
-                border: OutlineInputBorder(),
-                filled: true,
-                fillColor: Colors.white,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange, width: 2.0),
-                ),
-                contentPadding: EdgeInsets.all(16.0),
+            Container(
+              height: 55,
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.orange),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.white38,
+              ),
+              child: Row(
+                children: [
+                  SizedBox(
+                      width: 40,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: TextField(
+                          style: TextStyle(color: Colors.black87),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                          ),
+                          controller: countryCode,
+                        ),
+                      )
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    '|',
+                    style: TextStyle(fontSize: 30, color: Colors.black),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.phone,
+                      onChanged: (value) {
+                        setState(() {
+                          phone = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Enter your number',
+                        border: InputBorder.none,
+                        prefixIcon: Icon(Icons.phone),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
@@ -105,26 +166,64 @@ class MyHomePage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => OTPPage()),
-                );
-                // Handle button press
-              },
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
-              ),
-              child: Text('Continue',style: TextStyle(
-                color: Colors.white
-              ),
-              ),
-            ),
-          ],
+            Spacer(),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  disabledBackgroundColor: Colors.white,
+                  shadowColor: Colors.grey,
+                ),
+                onPressed: () async {
+                  // Check if the name is empty
+
+                    // If the name is not empty, proceed with phone verification
+                    await APIs.auth.verifyPhoneNumber(
+                      phoneNumber: '${countryCode.text + phone}',
+                      verificationCompleted: (PhoneAuthCredential credential) async {
+                        // Handle verification completed
+                      },
+                      verificationFailed: (FirebaseAuthException e) {
+                        // Handle verification failed
+                      },
+                      codeSent: (String verificationId, int? resendToken) {
+                        LoginScreen.verify = verificationId;
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => OTP(enteredName: '${countryCode.text + phone}'),
+                          ),
+                        );
+                      },
+                      codeAutoRetrievalTimeout: (String verificationId) {
+                        // Handle code auto retrieval timeout
+                      },
+                      timeout: Duration(seconds: 60),
+                    );
+                  }, child: Text("Continue",style: TextStyle(
+                color: Colors.white,fontSize: 20
+              ),),
+
+
+
         ),
-      ),
-    );
+
+    ])));}
+}
+
+
+class APIs {
+  static FirebaseAuth auth = FirebaseAuth.instance;
+  static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+
+  static User get user => auth.currentUser!;
+
+  static Future<bool> userExists() async {
+    return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
+
+  static Future<void> createUser() async {
+    //final time = DateTime.now().millisecondsSinceEpoch.toString();
+  }
+
 }

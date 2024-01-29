@@ -37,6 +37,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   pin_input_text_field: ^4.5.1
   pinput: ^3.0.1
+  firebase_auth: ^4.16.0
+  firebase_core: ^2.24.2
+  cloud_firestore: ^4.14.0
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +59,12 @@ dev_dependencies:
 flutter:
   assets:
     - assets/1.png
+    - assets/delivery.png
+    - assets/logisctiss.png
+    - assets/logo_removebg.png
+    - assets/offerimage.png
+    - assets/sale1.png
+    - assets/sale2.png
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
