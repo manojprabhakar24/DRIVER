@@ -44,42 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAYU7gOyZMri4qfUQkqY-_iY6bTm3zXmeM',
-    appId: '1:15572371265:web:92e89101f88b05f33e03c0',
-    messagingSenderId: '15572371265',
-    projectId: 'transmaa-d362b',
-    authDomain: 'transmaa-d362b.firebaseapp.com',
-    databaseURL: 'https://transmaa-d362b-default-rtdb.firebaseio.com',
-    storageBucket: 'transmaa-d362b.appspot.com',
-    measurementId: 'G-GV3QEV73CX',
+    apiKey: 'AIzaSyCwQC8G6Va6dxmKV9jTAnmx8gNSxMENIpE',
+    appId: '1:487559396972:web:94fb6901681bc095a5a249',
+    messagingSenderId: '487559396972',
+    projectId: 'otpdemo-338f4',
+    authDomain: 'otpdemo-338f4.firebaseapp.com',
+    storageBucket: 'otpdemo-338f4.appspot.com',
+    measurementId: 'G-9NTS8QQ12S',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDM2ELlrPBVW8Zi2NVCR2BwYmjpO-Zc4lE',
-    appId: '1:15572371265:android:b13c0e7dcf8ae1253e03c0',
-    messagingSenderId: '15572371265',
-    projectId: 'transmaa-d362b',
-    databaseURL: 'https://transmaa-d362b-default-rtdb.firebaseio.com',
-    storageBucket: 'transmaa-d362b.appspot.com',
+    apiKey: 'AIzaSyBYR_Uu_Ow_8PotjMOBv5u1112s1sO7tqc',
+    appId: '1:487559396972:android:841476288ec5fbf1a5a249',
+    messagingSenderId: '487559396972',
+    projectId: 'otpdemo-338f4',
+    storageBucket: 'otpdemo-338f4.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCgx_4NWdG-PQHEjTpeK_426GrtoIRKk5o',
-    appId: '1:15572371265:ios:d011967eb535661f3e03c0',
-    messagingSenderId: '15572371265',
-    projectId: 'transmaa-d362b',
-    databaseURL: 'https://transmaa-d362b-default-rtdb.firebaseio.com',
-    storageBucket: 'transmaa-d362b.appspot.com',
+    apiKey: 'AIzaSyCOkg46gBdxjRz9y6uz9uSkvNETpLKnnYc',
+    appId: '1:487559396972:ios:f30737ce6a8226a5a5a249',
+    messagingSenderId: '487559396972',
+    projectId: 'otpdemo-338f4',
+    storageBucket: 'otpdemo-338f4.appspot.com',
     iosBundleId: 'com.example.demo',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCgx_4NWdG-PQHEjTpeK_426GrtoIRKk5o',
-    appId: '1:15572371265:ios:dfe51ff635215d203e03c0',
-    messagingSenderId: '15572371265',
-    projectId: 'transmaa-d362b',
-    databaseURL: 'https://transmaa-d362b-default-rtdb.firebaseio.com',
-    storageBucket: 'transmaa-d362b.appspot.com',
+    apiKey: 'AIzaSyCOkg46gBdxjRz9y6uz9uSkvNETpLKnnYc',
+    appId: '1:487559396972:ios:8ed3ed37767ba3ada5a249',
+    messagingSenderId: '487559396972',
+    projectId: 'otpdemo-338f4',
+    storageBucket: 'otpdemo-338f4.appspot.com',
     iosBundleId: 'com.example.demo.RunnerTests',
   );
 }
