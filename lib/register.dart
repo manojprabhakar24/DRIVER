@@ -64,6 +64,18 @@ class _RegisterState extends State<Register> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Row(
+              children: [
+                Expanded(child: buildSegment(height: 9, width: 60, color: Colors.orange)),
+                SizedBox(width: 8),
+                Expanded(child: buildSegment(height: 9, width: 60)),
+                SizedBox(width: 8),
+                Expanded(child: buildSegment(height: 9, width: 60)),
+                SizedBox(width: 8),
+                Expanded(child: buildSegment(height: 9, width: 60)),
+              ],
+            ),
+            SizedBox(height: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -164,8 +176,6 @@ class _RegisterState extends State<Register> {
               ],
             ),
 
-// ... (remaining code)
-
             SizedBox(height: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,7 +230,13 @@ class _RegisterState extends State<Register> {
       ),
     );
   }
-
+  Widget buildSegment({double height = 6, double width = 80, Color color = Colors.grey}) {
+    return Container(
+      height: height,
+      width: width,
+      color: color,
+    );
+  }
   void _verifyOTP(String enteredOTP) async {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
