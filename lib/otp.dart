@@ -20,6 +20,19 @@ class _OTPState extends State<OTP> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 60,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Colors.black,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.transparent),
+      ),
+    );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(250),
@@ -79,6 +92,7 @@ class _OTPState extends State<OTP> {
             Pinput(
               length: 6,
               showCursor: true,
+              defaultPinTheme: defaultPinTheme,
               controller: _otpController,
               onChanged: (value) {
                 // Check if entered OTP is correct

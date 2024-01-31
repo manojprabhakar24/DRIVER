@@ -21,6 +21,7 @@ class _RegisterState extends State<Register> {
   final TextEditingController countryCode = TextEditingController();
   var phone = "";
   bool _isLoading = false;
+  int selectedSegment = 0; // Variable to track the selected segment
 
   @override
   void initState() {
@@ -30,6 +31,19 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 60,
+      textStyle: const TextStyle(
+        fontSize: 22,
+        color: Colors.black,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.red[100],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.transparent),
+      ),
+    );
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(250),
@@ -66,13 +80,49 @@ class _RegisterState extends State<Register> {
           children: [
             Row(
               children: [
-                Expanded(child: buildSegment(height: 9, width: 60, color: Colors.orange)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
-                SizedBox(width: 8),
-                Expanded(child: buildSegment(height: 9, width: 60)),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 0;
+                      });
+                    },
+                    child: buildSegment(height: 9, color: selectedSegment == 0 ? Colors.orange : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 1;
+                      });
+                    },
+                    child: buildSegment(height: 9, color: selectedSegment == 1 ? Colors.orange : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 2;
+                      });
+                    },
+                    child: buildSegment(height: 9, color: selectedSegment == 2 ? Colors.orange : Colors.grey),
+                  ),
+                ),
+                SizedBox(width: 8), // Add a gap
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedSegment = 3;
+                      });
+                    },
+                    child: buildSegment(height: 9, color: selectedSegment == 3 ? Colors.orange : Colors.grey),
+                  ),
+                ),
               ],
             ),
             SizedBox(height: 20),
@@ -86,8 +136,6 @@ class _RegisterState extends State<Register> {
               ],
             ),
             SizedBox(height: 15),
-            // ... (previous code)
-
             Row(
               children: [
                 Expanded(
@@ -175,7 +223,6 @@ class _RegisterState extends State<Register> {
                 ),
               ],
             ),
-
             SizedBox(height: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,10 +233,10 @@ class _RegisterState extends State<Register> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Pinput(
               length: 6,
-              showCursor: true,
+    defaultPinTheme: defaultPinTheme,
               controller: _otpController,
               onChanged: (value) {
                 // Additional handling if needed
@@ -211,7 +258,6 @@ class _RegisterState extends State<Register> {
                   verificationFailed: (FirebaseAuthException e) {},
                   codeSent: (String verificationId, int? resendToken) {
                     Register.verify = verificationId;
-
                   },
                   codeAutoRetrievalTimeout: (String verificationId) {},
                   timeout: Duration(seconds: 60),
@@ -230,13 +276,14 @@ class _RegisterState extends State<Register> {
       ),
     );
   }
-  Widget buildSegment({double height = 6, double width = 80, Color color = Colors.grey}) {
+
+  Widget buildSegment({double height = 6, Color color = Colors.grey}) {
     return Container(
       height: height,
-      width: width,
       color: color,
     );
   }
+
   void _verifyOTP(String enteredOTP) async {
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
