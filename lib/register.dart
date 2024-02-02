@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
 import 'form.dart';
-import 'new.dart';
-import 'otp.dart';
 
 class Register extends StatefulWidget {
   const Register({Key? key}) : super(key: key);
@@ -87,7 +85,10 @@ class _RegisterState extends State<Register> {
                         selectedSegment = 0;
                       });
                     },
-                    child: buildSegment(height: 9, color: selectedSegment == 0 ? Colors.orange : Colors.grey),
+                    child: buildSegment(
+                        height: 9,
+                        color:
+                            selectedSegment == 0 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -98,7 +99,10 @@ class _RegisterState extends State<Register> {
                         selectedSegment = 1;
                       });
                     },
-                    child: buildSegment(height: 9, color: selectedSegment == 1 ? Colors.orange : Colors.grey),
+                    child: buildSegment(
+                        height: 9,
+                        color:
+                            selectedSegment == 1 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -109,7 +113,10 @@ class _RegisterState extends State<Register> {
                         selectedSegment = 2;
                       });
                     },
-                    child: buildSegment(height: 9, color: selectedSegment == 2 ? Colors.orange : Colors.grey),
+                    child: buildSegment(
+                        height: 9,
+                        color:
+                            selectedSegment == 2 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -120,7 +127,10 @@ class _RegisterState extends State<Register> {
                         selectedSegment = 3;
                       });
                     },
-                    child: buildSegment(height: 9, color: selectedSegment == 3 ? Colors.orange : Colors.grey),
+                    child: buildSegment(
+                        height: 9,
+                        color:
+                            selectedSegment == 3 ? Colors.orange : Colors.grey),
                   ),
                 ),
               ],
@@ -191,23 +201,30 @@ class _RegisterState extends State<Register> {
                             primary: Colors.orange,
                           ),
                           onPressed: () async {
-                            // Trigger OTP sending process
-                            await APIs.auth.verifyPhoneNumber(
-                              phoneNumber: '${countryCode.text + phone}',
-                              verificationCompleted: (PhoneAuthCredential credential) async {},
-                              verificationFailed: (FirebaseAuthException e) {},
-                              codeSent: (String verificationId, int? resendToken) {
-                                Register.verify = verificationId;
-                                // Optionally, you can display a message to indicate that OTP has been sent.
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('OTP has been sent to ${countryCode.text + phone}'),
-                                  ),
-                                );
-                              },
-                              codeAutoRetrievalTimeout: (String verificationId) {},
-                              timeout: Duration(seconds: 60),
-                            );
+                            // Trigger OTP sending process only if OTP hasn't been sent before
+                            if (Register.verify.isEmpty) {
+                              await APIs.auth.verifyPhoneNumber(
+                                phoneNumber: '${countryCode.text + phone}',
+                                verificationCompleted:
+                                    (PhoneAuthCredential credential) async {},
+                                verificationFailed:
+                                    (FirebaseAuthException e) {},
+                                codeSent:
+                                    (String verificationId, int? resendToken) {
+                                  Register.verify = verificationId;
+                                  // Optionally, you can display a message to indicate that OTP has been sent.
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          'OTP has been sent to ${countryCode.text + phone}'),
+                                    ),
+                                  );
+                                },
+                                codeAutoRetrievalTimeout:
+                                    (String verificationId) {},
+                                timeout: Duration(seconds: 60),
+                              );
+                            }
                           },
                           child: Text(
                             'Get OTP',
@@ -236,7 +253,7 @@ class _RegisterState extends State<Register> {
             SizedBox(height: 10),
             Pinput(
               length: 6,
-    defaultPinTheme: defaultPinTheme,
+              defaultPinTheme: defaultPinTheme,
               controller: _otpController,
               onChanged: (value) {
                 // Additional handling if needed
@@ -254,7 +271,8 @@ class _RegisterState extends State<Register> {
 
                 await APIs.auth.verifyPhoneNumber(
                   phoneNumber: '${countryCode.text + phone}',
-                  verificationCompleted: (PhoneAuthCredential credential) async {},
+                  verificationCompleted:
+                      (PhoneAuthCredential credential) async {},
                   verificationFailed: (FirebaseAuthException e) {},
                   codeSent: (String verificationId, int? resendToken) {
                     Register.verify = verificationId;

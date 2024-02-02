@@ -41,11 +41,7 @@ class _OTPState extends State<OTP> {
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/1.png',
-                width: 200,
-                height: 100,
-              ),
+              Image.asset('assets/1.png', width: 200, height: 100, ),
               Text(
                 'Welcome',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -104,7 +100,7 @@ class _OTPState extends State<OTP> {
                 }
               },
             ),
-           Spacer(),
+            Spacer(),
             ElevatedButton(
               onPressed: () {
                 // Verify OTP when the button is pressed
@@ -113,11 +109,9 @@ class _OTPState extends State<OTP> {
               style: ElevatedButton.styleFrom(
                 primary: Colors.orange, // Change the button color here
               ),
-              child: Text('Verify',style: TextStyle(
-                color: Colors.white,fontSize: 20
-              )),
+              child: Text('Verify',
+                  style: TextStyle(color: Colors.white, fontSize: 20)),
             ),
-
             SizedBox(
               height: 18,
             ),
@@ -154,7 +148,8 @@ class _OTPState extends State<OTP> {
         if (e is FirebaseAuthException) {
           const errorMessages = {
             'invalid-verification-code': 'Incorrect OTP. Please try again.',
-            'invalid-verification-id': 'Invalid verification ID. Please restart the process.',
+            'invalid-verification-id':
+                'Invalid verification ID. Please restart the process.',
           };
           errorMessage = errorMessages[e.code] ??
               'An unexpected error occurred. Please try again.';

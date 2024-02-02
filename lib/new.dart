@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -146,8 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 hintText: 'Unload to...',
                                 border: OutlineInputBorder(),
                                 contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 12),
+                                    horizontal: 20, vertical: 12),
                               ),
                             ),
                           ),
@@ -160,9 +158,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         elevation: MaterialStateProperty.all<double>(5.0),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0))),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0))),
                         fixedSize: MaterialStateProperty.all<Size>(
                             Size(double.maxFinite, 35)),
                         backgroundColor: MaterialStateProperty.all<Color>(
@@ -171,8 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onPressed: () {},
                       child: Text(
                         "Confirm",
-                        style: TextStyle(color: Colors.black,
-                            fontSize: 20),
+                        style: TextStyle(color: Colors.black, fontSize: 20),
                       ),
                     ),
                   ),
@@ -227,4 +225,3 @@ class DottedLinePainter extends CustomPainter {
     return false;
   }
 }
-
