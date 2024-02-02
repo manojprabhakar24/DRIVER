@@ -19,7 +19,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController countryCode = TextEditingController();
   var phone = "";
-  bool _isLoading = false;
 
   @override
   void initState() {
