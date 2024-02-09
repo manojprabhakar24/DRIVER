@@ -19,7 +19,8 @@ class _RegisterState extends State<Register> {
   final TextEditingController countryCode = TextEditingController();
   var phone = "";
   bool _isLoading = false;
-  int selectedSegment = 0; // Variable to track the selected segment
+  int selectedSegment = 0;
+  String errorMessage = '';// Variable to track the selected segment
 
   @override
   void initState() {
@@ -88,7 +89,7 @@ class _RegisterState extends State<Register> {
                     child: buildSegment(
                         height: 9,
                         color:
-                            selectedSegment == 0 ? Colors.orange : Colors.grey),
+                        selectedSegment == 0 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -102,7 +103,7 @@ class _RegisterState extends State<Register> {
                     child: buildSegment(
                         height: 9,
                         color:
-                            selectedSegment == 1 ? Colors.orange : Colors.grey),
+                        selectedSegment == 1 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -116,7 +117,7 @@ class _RegisterState extends State<Register> {
                     child: buildSegment(
                         height: 9,
                         color:
-                            selectedSegment == 2 ? Colors.orange : Colors.grey),
+                        selectedSegment == 2 ? Colors.orange : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -130,7 +131,7 @@ class _RegisterState extends State<Register> {
                     child: buildSegment(
                         height: 9,
                         color:
-                            selectedSegment == 3 ? Colors.orange : Colors.grey),
+                        selectedSegment == 3 ? Colors.orange : Colors.grey),
                   ),
                 ),
               ],
@@ -216,7 +217,8 @@ class _RegisterState extends State<Register> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          'OTP has been sent to ${countryCode.text + phone}'),
+                                          'OTP has been sent to ${countryCode
+                                              .text + phone}'),
                                     ),
                                   );
                                 },
@@ -258,6 +260,13 @@ class _RegisterState extends State<Register> {
               onChanged: (value) {
                 // Additional handling if needed
               },
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                errorMessage, // Display the error message here
+                style: TextStyle(color: Colors.red),
+              ),
             ),
             Spacer(),
             ElevatedButton(
@@ -309,8 +318,14 @@ class _RegisterState extends State<Register> {
         smsCode: enteredOTP,
       );
 
+      // Sign in with the provided credential
       await APIs.auth.signInWithCredential(credential);
 
+      // Store the phone number in Firestore
+      String phoneNumber = countryCode.text + phone;
+      await APIs.updatePhoneNumber(phoneNumber);
+
+      // Navigate to the new screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -319,24 +334,49 @@ class _RegisterState extends State<Register> {
       );
     } catch (e) {
       print("Error verifying OTP: $e");
-
       // Handle OTP verification failure
-      // You can display an error message or take other actions
+
+      setState(() {
+        if (e is FirebaseAuthException) {
+          const errorMessages = {
+            'invalid-verification-code': 'Incorrect OTP. Please try again.',
+            'invalid-verification-id':
+            'Invalid verification ID. Please restart the process.',
+          };
+          errorMessage = errorMessages[e.code] ??
+              'An unexpected error occurred. Please try again.';
+        } else {
+          errorMessage = 'An unexpected error occurred. Please try again.';
+        }
+      });
     }
   }
 }
-
-class APIs {
+  class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   static User get user => auth.currentUser!;
 
-  static Future<bool> userExists() async {
-    return (await firestore.collection('users').doc(user.uid).get()).exists;
-  }
+  static Future<void> updatePhoneNumber(String phoneNumber) async {
+    try {
+      // Check if the document exists
+      DocumentSnapshot docSnapshot =
+      await firestore.collection('number').doc(user.uid).get();
 
-  static Future<void> createUser() async {
-    // Handle user creation logic
+      if (docSnapshot.exists) {
+        // If the document exists, update the phone number
+        await firestore.collection('number').doc(user.uid).update({
+          'phoneNumber': phoneNumber,
+        });
+      } else {
+        // If the document doesn't exist, create a new document with the phone number
+        await firestore.collection('number').doc(user.uid).set({
+          'phoneNumber': phoneNumber,
+        });
+      }
+    } catch (e) {
+      print("Error updating phone number: $e");
+      // Handle error updating phone number
+    }
   }
 }

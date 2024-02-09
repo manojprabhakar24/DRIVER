@@ -41,7 +41,7 @@ class _OTPState extends State<OTP> {
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/1.png', width: 200, height: 100, ),
+              Image.asset('assets/1.png', width: 200, height: 100,),
               Text(
                 'Welcome',
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -149,7 +149,7 @@ class _OTPState extends State<OTP> {
           const errorMessages = {
             'invalid-verification-code': 'Incorrect OTP. Please try again.',
             'invalid-verification-id':
-                'Invalid verification ID. Please restart the process.',
+            'Invalid verification ID. Please restart the process.',
           };
           errorMessage = errorMessages[e.code] ??
               'An unexpected error occurred. Please try again.';
