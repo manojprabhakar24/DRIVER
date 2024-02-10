@@ -20,7 +20,8 @@ class _RegisterState extends State<Register> {
   var phone = "";
   bool _isLoading = false;
   int selectedSegment = 0;
-  String errorMessage = '';// Variable to track the selected segment
+  String errorMessage = ''; // Variable to track the selected segment
+  bool isVerificationCompleted = false;
 
   @override
   void initState() {
@@ -88,8 +89,9 @@ class _RegisterState extends State<Register> {
                     },
                     child: buildSegment(
                         height: 9,
-                        color:
-                        selectedSegment == 0 ? Colors.orange : Colors.grey),
+                        color: selectedSegment == 0
+                            ? Colors.orange
+                            : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -102,8 +104,9 @@ class _RegisterState extends State<Register> {
                     },
                     child: buildSegment(
                         height: 9,
-                        color:
-                        selectedSegment == 1 ? Colors.orange : Colors.grey),
+                        color: selectedSegment == 1
+                            ? Colors.orange
+                            : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -116,8 +119,9 @@ class _RegisterState extends State<Register> {
                     },
                     child: buildSegment(
                         height: 9,
-                        color:
-                        selectedSegment == 2 ? Colors.orange : Colors.grey),
+                        color: selectedSegment == 2
+                            ? Colors.orange
+                            : Colors.grey),
                   ),
                 ),
                 SizedBox(width: 8), // Add a gap
@@ -130,8 +134,9 @@ class _RegisterState extends State<Register> {
                     },
                     child: buildSegment(
                         height: 9,
-                        color:
-                        selectedSegment == 3 ? Colors.orange : Colors.grey),
+                        color: selectedSegment == 3
+                            ? Colors.orange
+                            : Colors.grey),
                   ),
                 ),
               ],
@@ -142,7 +147,8 @@ class _RegisterState extends State<Register> {
               children: [
                 Text(
                   'Registration',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -177,7 +183,8 @@ class _RegisterState extends State<Register> {
                         ),
                         Text(
                           '|',
-                          style: TextStyle(fontSize: 30, color: Colors.black),
+                          style: TextStyle(
+                              fontSize: 30, color: Colors.black),
                         ),
                         Expanded(
                           child: TextField(
@@ -203,22 +210,27 @@ class _RegisterState extends State<Register> {
                           ),
                           onPressed: () async {
                             // Trigger OTP sending process only if OTP hasn't been sent before
-                            if (Register.verify.isEmpty) {
+                            if (Register.verify.isEmpty &&
+                                !isVerificationCompleted) {
                               await APIs.auth.verifyPhoneNumber(
                                 phoneNumber: '${countryCode.text + phone}',
                                 verificationCompleted:
-                                    (PhoneAuthCredential credential) async {},
+                                    (PhoneAuthCredential credential) async {
+                                  setState(() {
+                                    isVerificationCompleted = true;
+                                  });
+                                },
                                 verificationFailed:
                                     (FirebaseAuthException e) {},
-                                codeSent:
-                                    (String verificationId, int? resendToken) {
+                                codeSent: (String verificationId,
+                                    int? resendToken) {
                                   Register.verify = verificationId;
                                   // Optionally, you can display a message to indicate that OTP has been sent.
-                                  ScaffoldMessenger.of(context).showSnackBar(
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          'OTP has been sent to ${countryCode
-                                              .text + phone}'),
+                                          'OTP has been sent to ${countryCode.text + phone}'),
                                     ),
                                   );
                                 },
@@ -248,7 +260,8 @@ class _RegisterState extends State<Register> {
               children: [
                 Text(
                   'OTP',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -276,19 +289,19 @@ class _RegisterState extends State<Register> {
                 shadowColor: Colors.grey,
               ),
               onPressed: () async {
-                _verifyOTP(_otpController.text);
-
-                await APIs.auth.verifyPhoneNumber(
-                  phoneNumber: '${countryCode.text + phone}',
-                  verificationCompleted:
-                      (PhoneAuthCredential credential) async {},
-                  verificationFailed: (FirebaseAuthException e) {},
-                  codeSent: (String verificationId, int? resendToken) {
-                    Register.verify = verificationId;
-                  },
-                  codeAutoRetrievalTimeout: (String verificationId) {},
-                  timeout: Duration(seconds: 60),
-                );
+                // Check if verification has been completed before allowing navigation
+                if (isVerificationCompleted) {
+                  // Navigate to the new screen
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => NewScreen(),
+                    ),
+                  );
+                } else {
+                  // Verify OTP
+                  _verifyOTP(_otpController.text);
+                }
               },
               child: Text(
                 "Continue",
@@ -352,7 +365,8 @@ class _RegisterState extends State<Register> {
     }
   }
 }
-  class APIs {
+
+class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static User get user => auth.currentUser!;
