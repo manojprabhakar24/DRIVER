@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'home.dart';
 import 'new.dart'; // Import your NewScreen file
@@ -17,7 +18,20 @@ class OTP extends StatefulWidget {
 class _OTPState extends State<OTP> {
   final TextEditingController _otpController = TextEditingController();
   String errorMessage = '';
+  late FocusNode _otpFocusNode;
+  @override
+  void initState() {
+    super.initState();
+    _otpFocusNode = FocusNode();
+    _otpFocusNode.requestFocus();
 
+  }
+  @override
+  void dispose() {
+    _otpFocusNode.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     final defaultPinTheme = PinTheme(
@@ -90,6 +104,7 @@ class _OTPState extends State<OTP> {
               showCursor: true,
               defaultPinTheme: defaultPinTheme,
               controller: _otpController,
+              focusNode: _otpFocusNode,
               onChanged: (value) {
                 // Check if entered OTP is correct
                 if (value.length == 6) {
@@ -105,6 +120,7 @@ class _OTPState extends State<OTP> {
               onPressed: () {
                 // Verify OTP when the button is pressed
                 _verifyOTP(_otpController.text);
+
               },
               style: ElevatedButton.styleFrom(
                 primary: Colors.orange, // Change the button color here
@@ -134,11 +150,14 @@ class _OTPState extends State<OTP> {
 
       await APIs.auth.signInWithCredential(credential);
 
+      // Store the authentication state
+      await _setLoggedIn(true);
+
       // Navigate to the next screen on successful verification
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => MyHomePage(),
+          builder: (_) => MyHomePage(onLogout: () {  },),
         ),
       );
     } catch (e) {
@@ -159,4 +178,10 @@ class _OTPState extends State<OTP> {
       });
     }
   }
+
+  Future<void> _setLoggedIn(bool isLoggedIn) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', isLoggedIn);
+  }
+
 }

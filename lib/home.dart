@@ -5,8 +5,11 @@ import 'package:demo/otp.dart'; // Import your OTP screen file
 import 'package:demo/register.dart'; // Import your registration screen file
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+
   static String verify = "";
+  final VoidCallback onLogin;
+
+  const LoginScreen({Key? key, required this.onLogin}) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -136,8 +139,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Colors.orange,
                   ),
                 ),
+
               ],
             ),
+
             SizedBox(height: 20),
             GestureDetector(
               onTap: () {
@@ -158,9 +163,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+
             Spacer(),
             ElevatedButton(
               onPressed: () {
+
                 _verifyPhoneNumber(
                     '${countryCodeController.text + phoneNumber}');
 
@@ -173,7 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
+
     );
+
   }
 
   void _verifyPhoneNumber(String phoneNumber) async {
@@ -218,6 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
       print("Error verifying phone number: $e");
       // Handle error verifying phone number
     }
+
   }
 }
 
@@ -239,6 +249,7 @@ class APIs {
       // Handle error checking phone number existence
       return false;
     }
+
   }
 }
 

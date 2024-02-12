@@ -20,13 +20,22 @@ class _RegisterState extends State<Register> {
   var phone = "";
   bool _isLoading = false;
   int selectedSegment = 0;
-  String errorMessage = ''; // Variable to track the selected segment
+  String errorMessage = '';
   bool isVerificationCompleted = false;
+  late FocusNode _otpFocusNode;
 
   @override
   void initState() {
-    countryCode.text = '+91';
     super.initState();
+    _otpFocusNode = FocusNode();
+    countryCode.text = '+91';
+  }
+
+  @override
+  void dispose() {
+    _otpFocusNode.dispose();
+    _otpController.dispose();
+    super.dispose();
   }
 
   @override
@@ -209,7 +218,6 @@ class _RegisterState extends State<Register> {
                             primary: Colors.orange,
                           ),
                           onPressed: () async {
-                            // Trigger OTP sending process only if OTP hasn't been sent before
                             if (Register.verify.isEmpty &&
                                 !isVerificationCompleted) {
                               await APIs.auth.verifyPhoneNumber(
@@ -225,7 +233,6 @@ class _RegisterState extends State<Register> {
                                 codeSent: (String verificationId,
                                     int? resendToken) {
                                   Register.verify = verificationId;
-                                  // Optionally, you can display a message to indicate that OTP has been sent.
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(
                                     SnackBar(
@@ -270,6 +277,7 @@ class _RegisterState extends State<Register> {
               length: 6,
               defaultPinTheme: defaultPinTheme,
               controller: _otpController,
+              focusNode: _otpFocusNode,
               onChanged: (value) {
                 // Additional handling if needed
               },
@@ -289,9 +297,7 @@ class _RegisterState extends State<Register> {
                 shadowColor: Colors.grey,
               ),
               onPressed: () async {
-                // Check if verification has been completed before allowing navigation
                 if (isVerificationCompleted) {
-                  // Navigate to the new screen
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
@@ -299,7 +305,6 @@ class _RegisterState extends State<Register> {
                     ),
                   );
                 } else {
-                  // Verify OTP
                   _verifyOTP(_otpController.text);
                 }
               },
@@ -331,14 +336,10 @@ class _RegisterState extends State<Register> {
         smsCode: enteredOTP,
       );
 
-      // Sign in with the provided credential
       await APIs.auth.signInWithCredential(credential);
-
-      // Store the phone number in Firestore
       String phoneNumber = countryCode.text + phone;
       await APIs.updatePhoneNumber(phoneNumber);
 
-      // Navigate to the new screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -347,7 +348,6 @@ class _RegisterState extends State<Register> {
       );
     } catch (e) {
       print("Error verifying OTP: $e");
-      // Handle OTP verification failure
 
       setState(() {
         if (e is FirebaseAuthException) {
@@ -369,28 +369,23 @@ class _RegisterState extends State<Register> {
 class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
-  static User get user => auth.currentUser!;
 
   static Future<void> updatePhoneNumber(String phoneNumber) async {
     try {
-      // Check if the document exists
       DocumentSnapshot docSnapshot =
-      await firestore.collection('number').doc(user.uid).get();
+      await firestore.collection('number').doc(auth.currentUser!.uid).get();
 
       if (docSnapshot.exists) {
-        // If the document exists, update the phone number
-        await firestore.collection('number').doc(user.uid).update({
+        await firestore.collection('number').doc(auth.currentUser!.uid).update({
           'phoneNumber': phoneNumber,
         });
       } else {
-        // If the document doesn't exist, create a new document with the phone number
-        await firestore.collection('number').doc(user.uid).set({
+        await firestore.collection('number').doc(auth.currentUser!.uid).set({
           'phoneNumber': phoneNumber,
         });
       }
     } catch (e) {
       print("Error updating phone number: $e");
-      // Handle error updating phone number
     }
   }
 }
