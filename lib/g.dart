@@ -42,7 +42,6 @@ class _MainScreenState extends State<MainScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Image.asset('assets/your_image.png'), // Replace 'your_image.png' with your image asset path
           SizedBox(height: 20),
           Center(
             child: ElevatedButton(
