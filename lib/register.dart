@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+import 'package:http/http.dart' as http;
+
 
 import 'form.dart';
 
@@ -237,7 +242,8 @@ class _RegisterState extends State<Register> {
                                       .showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          'OTP has been sent to ${countryCode.text + phone}'),
+                                          'OTP has been sent to ${countryCode
+                                              .text + phone}'),
                                     ),
                                   );
                                 },
@@ -331,15 +337,21 @@ class _RegisterState extends State<Register> {
 
   void _verifyOTP(String enteredOTP) async {
     try {
+      // Verify the OTP
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: Register.verify,
         smsCode: enteredOTP,
       );
-
       await APIs.auth.signInWithCredential(credential);
       String phoneNumber = countryCode.text + phone;
+
+      // Update phone number in Firestore
       await APIs.updatePhoneNumber(phoneNumber);
 
+      // Send FCM notification to the verified phone number
+
+
+      // Navigate to the next screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -348,8 +360,8 @@ class _RegisterState extends State<Register> {
       );
     } catch (e) {
       print("Error verifying OTP: $e");
-
       setState(() {
+        // Handle errors
         if (e is FirebaseAuthException) {
           const errorMessages = {
             'invalid-verification-code': 'Incorrect OTP. Please try again.',
@@ -365,6 +377,8 @@ class _RegisterState extends State<Register> {
     }
   }
 }
+
+
 
 class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
