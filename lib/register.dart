@@ -307,7 +307,7 @@ class _RegisterState extends State<Register> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => NewScreen(),
+                      builder: (_) => NewScreen(phoneNumber: '',),
                     ),
                   );
                 } else {
@@ -348,14 +348,12 @@ class _RegisterState extends State<Register> {
       // Update phone number in Firestore
       await APIs.updatePhoneNumber(phoneNumber);
 
-      // Send FCM notification to the verified phone number
-
-
-      // Navigate to the next screen
+      // Navigate to the next screen and pass the phone number
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => NewScreen(),
+          builder: (_) =>
+              NewScreen(phoneNumber: phoneNumber), // Pass the phone number here
         ),
       );
     } catch (e) {
@@ -377,10 +375,7 @@ class _RegisterState extends State<Register> {
     }
   }
 }
-
-
-
-class APIs {
+  class APIs {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 

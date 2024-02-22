@@ -43,7 +43,7 @@ class MyHomePage extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MainScreen(), // Your login screen
+                  builder: (context) => MainScreen(phoneNumber: '',), // Your login screen
                 ),
               );
             },
@@ -61,7 +61,7 @@ class MyHomePage extends StatelessWidget {
                 // Navigate to the next screen when the button is pressed
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MainScreen()), // Your next screen
+                  MaterialPageRoute(builder: (context) => MainScreen(phoneNumber: '',)), // Your next screen
                 );
               },
               child: Text('Next Screen'),
