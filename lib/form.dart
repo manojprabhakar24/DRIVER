@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'g.dart';
-
 class NewScreen extends StatefulWidget {
   final String phoneNumber; // Add phoneNumber field
   const NewScreen({Key? key, required this.phoneNumber}) : super(key: key);
@@ -35,8 +33,7 @@ class _NewScreenState extends State<NewScreen> {
 
       // Store data in Firestore
       await FirebaseFirestore.instance.collection('drivers').add({
-        'phoneNumber': widget.phoneNumber,
-        'driverName': driverName,
+        'driverName1': driverName,
         'licenseNumber': licenseNumber,
         'vehicleNumber': vehicleNumber,
         'timestamp': FieldValue.serverTimestamp(),
@@ -45,6 +42,58 @@ class _NewScreenState extends State<NewScreen> {
       print('Data stored successfully in Firestore');
     } catch (e) {
       print('Error storing data in Firestore: $e');
+    }
+  }
+
+  Future<void> _storeDataInManojCollection(String phoneNumber) async {
+    try {
+      // Store the phone number in the 'manoj' collection
+      await FirebaseFirestore.instance.collection('manoj').add({
+        'phoneNumber': phoneNumber,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print('Data stored successfully in "manoj" collection in Firestore');
+    } catch (e) {
+      print('Error storing data in "manoj" collection in Firestore: $e');
+    }
+  }
+
+  Future<void> _fetchAndDisplayDataFromFirebase() async {
+    try {
+      var snapshot = await FirebaseFirestore.instance.collection('drivers').get();
+      if (snapshot.docs.isNotEmpty) {
+        var data = snapshot.docs.last.data();
+        String driverName = data['driverName1'];
+        String lastFourDigits = driverName.substring(driverName.length - 4);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Last submitted data'),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Driver Name: ********$lastFourDigits'),
+                  Text('License Number: ${data['licenseNumber']}'),
+                  Text('Vehicle Number: ${data['vehicleNumber']}'),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async {
+                    await _storeDataInManojCollection(data['driverName1']);
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print('Error fetching data from Firestore: $e');
     }
   }
 
@@ -90,18 +139,14 @@ class _NewScreenState extends State<NewScreen> {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                _storeDataInFirebase();
-                // Navigate to the next screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MainScreen(phoneNumber: widget.phoneNumber),
-                  ),
-                );
+              onPressed: () async {
+                await _storeDataInFirebase();
+                // Fetch and display the data after storing
+                _fetchAndDisplayDataFromFirebase();
               },
               child: Text('Submit'),
             ),
+
           ],
         ),
       ),
