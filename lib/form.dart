@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class NewScreen extends StatefulWidget {
   final String phoneNumber; // Add phoneNumber field
@@ -52,12 +55,36 @@ class _NewScreenState extends State<NewScreen> {
         'phoneNumber': phoneNumber,
         'timestamp': FieldValue.serverTimestamp(),
       });
-      print('Data stored successfully in "manoj" collection in Firestore');
+      print('HEY');
     } catch (e) {
       print('Error storing data in "manoj" collection in Firestore: $e');
     }
   }
 
+  Future<void> _sendSms(String recipient, String message) async {
+    final accountSid = 'ACe4cb64943355f783e3126cdbdce9e9ee';
+    final authToken = '6c7b8ff3eda143eed7ae1180972f548b';
+    final twilioNumber = '+14108461447';
+
+    final response = await http.post(
+      Uri.parse('https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json'),
+      headers: {
+        'Authorization': 'Basic ' + base64Encode(utf8.encode('$accountSid:$authToken')),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: {
+        'To': recipient,
+        'From': twilioNumber,
+        'Body': message,
+      },
+    );
+
+    if (response.statusCode == 201) {
+      print('SMS sent successfully');
+    } else {
+      print('Failed to send SMS: ${response.body}');
+    }
+  }
   Future<void> _fetchAndDisplayDataFromFirebase() async {
     try {
       var snapshot = await FirebaseFirestore.instance.collection('drivers').get();
@@ -84,6 +111,10 @@ class _NewScreenState extends State<NewScreen> {
                   onPressed: () async {
                     await _storeDataInManojCollection(data['driverName1']);
                     Navigator.of(context).pop();
+
+                    // Send SMS after dismissing the dialog
+                    String message = 'Hi, how are you, ${data['driverName1']}? Welcome to TRANSMAA, da boys and girls -RAAHULAA';
+                    await _sendSms(data['driverName1'], message);
                   },
                   child: Text('OK'),
                 ),

@@ -1,11 +1,8 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:http/http.dart' as http;
 
 
 import 'form.dart';
@@ -23,7 +20,6 @@ class _RegisterState extends State<Register> {
   final TextEditingController _otpController = TextEditingController();
   final TextEditingController countryCode = TextEditingController();
   var phone = "";
-  bool _isLoading = false;
   int selectedSegment = 0;
   String errorMessage = '';
   bool isVerificationCompleted = false;
