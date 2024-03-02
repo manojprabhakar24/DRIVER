@@ -15,7 +15,7 @@ class MainScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
+            const Text(
               'Phone Number:',
               style: TextStyle(fontSize: 20),
             ),

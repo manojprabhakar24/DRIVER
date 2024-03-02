@@ -62,29 +62,31 @@ class _NewScreenState extends State<NewScreen> {
   }
 
   Future<void> _sendSms(String recipient, String message) async {
-    final accountSid = 'ACe4cb64943355f783e3126cdbdce9e9ee';
-    final authToken = '6c7b8ff3eda143eed7ae1180972f548b';
-    final twilioNumber = '+14108461447';
+    final apiKey = 'your_api_key'; // Your MySMSMantra API Key
+    final senderId = 'your_sender_id'; // Your sender ID
+    final url = 'https://api.mysmsmantra.com/web-api/send_sms';
 
     final response = await http.post(
-      Uri.parse('https://api.twilio.com/2010-04-01/Accounts/$accountSid/Messages.json'),
+      Uri.parse(url),
       headers: {
-        'Authorization': 'Basic ' + base64Encode(utf8.encode('$accountSid:$authToken')),
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
-      body: {
-        'To': recipient,
-        'From': twilioNumber,
-        'Body': message,
-      },
+      body: jsonEncode({
+        'api-key': apiKey,
+        'to': recipient,
+        'message': message,
+        'sender-id': senderId,
+        'format': 'json',
+      }),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print('SMS sent successfully');
     } else {
       print('Failed to send SMS: ${response.body}');
     }
   }
+
   Future<void> _fetchAndDisplayDataFromFirebase() async {
     try {
       var snapshot = await FirebaseFirestore.instance.collection('drivers').get();
@@ -177,7 +179,6 @@ class _NewScreenState extends State<NewScreen> {
               },
               child: Text('Submit'),
             ),
-
           ],
         ),
       ),
